@@ -3,7 +3,7 @@ import Algorithms
 struct Day01: AdventDay {
   var data: String
 
-  var entities: [String.SubSequence] {
+  var entities: [some StringProtocol] {
     return data.split(separator: "\n")
   }
 
@@ -36,7 +36,7 @@ struct Day01: AdventDay {
     
     return entities.map { entity in
       var firstRanges: [Range<String.Index>] = []
-      var lastRanges: [Range<Substring.Index>] = []
+      var lastRanges: [Range<String.Index>] = []
       
       for target in targets {
         if let firstRange = entity.range(of: target) {
