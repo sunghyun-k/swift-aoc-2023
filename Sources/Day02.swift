@@ -46,7 +46,15 @@ struct Day02: AdventDay {
   }
   
   func part2() -> Any {
-    return 0
+    return games
+      .lazy
+      .map {
+        [$0.sets.max(of: \.red)!.red,
+         $0.sets.max(of: \.green)!.green,
+         $0.sets.max(of: \.blue)!.blue]
+      }
+      .map { $0.reduce(1, *) }
+      .reduce(0, +)
   }
 }
 
@@ -59,4 +67,10 @@ struct Game {
   
   var id: Int
   var sets: [Set]
+}
+
+extension Sequence {
+  func max(of keyPath: KeyPath<Element, some Comparable>) -> Element? {
+    return self.max { $0[keyPath: keyPath] < $1[keyPath: keyPath] }
+  }
 }
