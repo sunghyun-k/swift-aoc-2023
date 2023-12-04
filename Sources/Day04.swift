@@ -27,9 +27,18 @@ struct Day04: AdventDay {
       .reduce(0) { $0 + $1.point }
   }
 
-//  func part2() -> Any {
-//    
-//  }
+  func part2() -> Any {
+    let cards = cards
+    var myCardsCounts = [Int](repeating: 1, count: cards.count)
+    
+    for (index, card) in cards.enumerated() {
+      for offset in 0..<card.winCount {
+        let myCards = myCardsCounts[index]
+        myCardsCounts[safe: index + offset + 1]? += myCards
+      }
+    }
+    return myCardsCounts.reduce(0, +)
+  }
 }
 
 struct Card {
@@ -37,12 +46,30 @@ struct Card {
   var havingNumbers: [Int]
 }
 extension Card {
-  var point: Int {
-    let count = havingNumbers
+  var winCount: Int {
+    havingNumbers
       .filter { winningNumbers.contains($0) }
       .count
-    if count <= 0 { return 0 }
-    return (pow(2, count - 1) as NSDecimalNumber).intValue
+  }
+  var point: Int {
+    if winCount <= 0 { return 0 }
+    return (pow(2, winCount - 1) as NSDecimalNumber).intValue
   }
 }
 
+extension MutableCollection where Self: RandomAccessCollection {
+  subscript(safe index: Index) -> Element? {
+    get {
+      if self.startIndex <= index,
+         self.endIndex > index
+      { self[index] }
+      else { nil }
+    }
+    set {
+      if let newValue,
+         self.startIndex <= index,
+         self.endIndex > index
+      { self[index] = newValue }
+    }
+  }
+}
